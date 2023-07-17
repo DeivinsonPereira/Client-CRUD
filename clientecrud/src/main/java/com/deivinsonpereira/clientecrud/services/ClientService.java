@@ -21,4 +21,10 @@ public class ClientService {
 		Page<Client> list = clientRepository.findAll(pageRequest);
 		return list.map(x -> new ClientDTO(x));
 	}
+	
+	@Transactional(readOnly = true)
+	public ClientDTO findById(Long id) {
+		Client result = clientRepository.findById(id).get();
+		return new ClientDTO(result);
+	}
 }
