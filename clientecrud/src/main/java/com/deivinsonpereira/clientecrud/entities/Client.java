@@ -20,10 +20,10 @@ public class Client {
 	private String name;
 	private String cpf;
 	private Double income;
-	private Integer children;
 	
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant birthDate;
+	private Integer children;
 	
 	public Client() {
 	}
