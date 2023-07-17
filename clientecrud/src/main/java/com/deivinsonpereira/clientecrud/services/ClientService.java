@@ -1,6 +1,8 @@
 package com.deivinsonpereira.clientecrud.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.deivinsonpereira.clientecrud.dto.ClientDTO;
 import com.deivinsonpereira.clientecrud.entities.Client;
 import com.deivinsonpereira.clientecrud.repositories.ClientRepository;
+import com.deivinsonpereira.clientecrud.services.exceptions.DatabaseException;
 import com.deivinsonpereira.clientecrud.services.exceptions.ResourceNotFoundException;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -58,6 +61,19 @@ public class ClientService {
 			throw new ResourceNotFoundException("Not Found");
 		}
 	}
+	
+	public void delete(Long id) {
+		try {
+			clientRepository.deleteById(id);
+		}
+		catch(EmptyResultDataAccessException e) {
+			throw new ResourceNotFoundException("Not found");
+		}
+		catch(DataIntegrityViolationException e) {
+			throw new DatabaseException("Integrity Violation");
+		}
+	}
+	
 
 	private void copyDtoToEntity(ClientDTO dto, Client entity) {
 		try {
