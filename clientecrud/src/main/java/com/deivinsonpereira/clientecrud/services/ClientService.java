@@ -18,24 +18,23 @@ public class ClientService {
 
 	@Autowired
 	private ClientRepository clientRepository;
-	
+
 	@Transactional(readOnly = true)
-	public Page<ClientDTO> findAllPaged(PageRequest pageRequest){
+	public Page<ClientDTO> findAllPaged(PageRequest pageRequest) {
 		try {
 			Page<Client> list = clientRepository.findAll(pageRequest);
 			return list.map(x -> new ClientDTO(x));
-		}
-		catch(EntityNotFoundException e) {
+		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Not found");
 		}
 	}
-	
+
 	@Transactional(readOnly = true)
 	public ClientDTO findById(Long id) {
 		Client result = clientRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Not found"));
 		return new ClientDTO(result);
 	}
-	
+
 	@Transactional
 	public ClientDTO insert(ClientDTO dto) {
 		try {
@@ -43,8 +42,19 @@ public class ClientService {
 			copyDtoToEntity(dto, entity);
 			entity = clientRepository.save(entity);
 			return new ClientDTO(entity);
+		} catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException("Not Found");
 		}
-		catch(EntityNotFoundException e) {
+	}
+
+	@Transactional
+	public ClientDTO update(Long id, ClientDTO dto) {
+		try {
+			Client entity = clientRepository.getReferenceById(id);
+			copyDtoToEntity(dto, entity);
+			entity = clientRepository.save(entity);
+			return new ClientDTO(entity);
+		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Not Found");
 		}
 	}
@@ -56,12 +66,9 @@ public class ClientService {
 			entity.setIncome(dto.getIncome());
 			entity.setBirthDate(dto.getBirthDate());
 			entity.setChildren(dto.getChildren());
-		}
-		catch(EntityNotFoundException e) {
+		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Not found");
 		}
 	}
-	
-	
-	
+
 }
